@@ -21,7 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "three": "^0.165.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
