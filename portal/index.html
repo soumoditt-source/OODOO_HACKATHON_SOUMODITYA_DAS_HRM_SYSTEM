@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Odoo HRMS — Enterprise Portal</title>
+<style>
+/* ══════════════════════════════════════════════════════════════
+   ODOO HRMS — GLOBAL DESIGN SYSTEM (AESTHETIC UPGRADE)
+   Author: Soumoditya Das | Humanized Code Pattern
+   ══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sidebar-bg:    #111827;
+  --sidebar-hover: #1f2937;
+  --sidebar-active:#374151;
+  --accent:        #3b82f6;
+  --accent-hover:  #2563eb;
+  --accent-light:  #eff6ff;
+  --success:       #10b981;
+  --success-light: #d1fae5;
+  --danger:        #ef4444;
+  --danger-light:  #fee2e2;
+  --warning:       #f59e0b;
+  --bg-main:       #f3f4f6;
+  --bg-card:       #ffffff;
+  --text-primary:  #111827;
+  --text-secondary:#4b5563;
+  --text-muted:    #9ca3af;
+  --border:        #e5e7eb;
+  --border-light:  #f3f4f6;
+  --shadow-sm:     0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md:     0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:     0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius:        12px;
+  --radius-sm:     8px;
+  --radius-lg:     16px;
+  --transition:    all 0.2s ease-in-out;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+.login-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.login-logo {
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 16px; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; color: #fff; font-size: 28px;
+}
+.login-title { color: #fff; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.login-sub { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 30px; }
+.portal-selector {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+}
+.portal-opt {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  padding: 12px; border-radius: var(--radius-sm); color: #fff; cursor: pointer;
+  transition: var(--transition);
+}
+.portal-opt:hover { background: rgba(255,255,255,0.1); }
+.portal-opt.selected { background: var(--accent); border-color: var(--accent); }
+.login-input {
+  width: 100%; padding: 14px 16px; margin-bottom: 16px;
+  background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm); color: #fff; font-size: 15px; outline: none;
+}
+.login-input::placeholder { color: rgba(255,255,255,0.4); }
+.login-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.3); }
+.login-btn {
+  width: 100%; padding: 14px;
+  background: var(--accent); border: none; border-radius: var(--radius-sm);
+  color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: var(--transition);
+}
+.login-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+
+/* ── LAYOUT ── */
+#appLayout { display: none; width: 100%; height: 100%; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 250px;
+  background: var(--sidebar-bg);
+  display: flex; flex-direction: column;
+  flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+}
+.sidebar-logo {
+  padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; gap: 12px;
+}
+.logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
+.logo-text { color: #fff; font-weight: 700; font-size: 16px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: var(--transition);
+}
+.nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+.nav-item.active { background: var(--sidebar-active); color: #fff; border-left: 4px solid var(--accent); }
+.nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+/* ── MAIN ── */
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#topbar {
+  height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 24px; justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.page-title { font-weight: 700; font-size: 18px; color: var(--text-primary); }
+.top-actions { display: flex; align-items: center; gap: 16px; }
+.clock-btn {
+  background: var(--accent); color: #fff; border: none; padding: 8px 16px;
+  border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: var(--transition);
+}
+.clock-btn:hover { background: var(--accent-hover); }
+.clock-btn.clocked-in { background: var(--danger); }
+.clock-btn.clocked-in:hover { background: #dc2626; }
+
+#content { flex: 1; overflow-y: auto; padding: 24px; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── COMPONENTS ── */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); padding: 20px; }
+.card-header { font-weight: 700; font-size: 16px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); }
+.kpi-val { font-size: 32px; font-weight: 800; margin: 8px 0; }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 12px; text-transform: uppercase; }
+td { padding: 14px 12px; border-bottom: 1px solid var(--border-light); color: var(--text-primary); }
+tr:hover td { background: var(--bg-main); }
+.badge { padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+.badge.success { background: var(--success-light); color: var(--success); }
+.badge.danger { background: var(--danger-light); color: var(--danger); }
+.badge.warning { background: #fef3c7; color: #d97706; }
+
+.btn-primary { background: var(--accent); color: #fff; padding: 8px 16px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+.btn-primary:hover { background: var(--accent-hover); }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">O</div>
+    <div class="login-title">Odoo HRMS Portal</div>
+    <div class="login-sub">Enterprise Management System</div>
+    
+    <div class="portal-selector">
+      <div class="portal-opt selected" onclick="selectPortal('admin', this)">HR / Admin</div>
+      <div class="portal-opt" onclick="selectPortal('employee', this)">Employee</div>
+    </div>
+    
+    <input type="text" id="loginEmail" class="login-input" placeholder="Email Address" value="soumoditya@company.com">
+    <input type="password" id="loginPass" class="login-input" placeholder="Password" value="password123">
+    
+    <button class="login-btn" onclick="doLogin()">Secure Login</button>
+  </div>
+</div>
+
+<!-- ── APP LAYOUT ── -->
+<div id="appLayout">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">O</div>
+      <div class="logo-text">Odoo HRMS</div>
+    </div>
+    <div style="padding: 20px 0;">
+      <div class="nav-item active" onclick="nav('dashboard', this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item admin-only" onclick="nav('employees', this)">
+        <span class="nav-icon">👥</span> Employees
+      </div>
+      <div class="nav-item" onclick="nav('attendance', this)">
+        <span class="nav-icon">⏱️</span> Attendance
+      </div>
+      <div class="nav-item" onclick="nav('leaves', this)">
+        <span class="nav-icon">📅</span> Leaves
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="top-actions">
+        <span style="font-weight:600; color:var(--text-secondary)" id="userNameDisplay">Soumoditya Das</span>
+        <button id="topClockBtn" class="clock-btn" onclick="toggleClock()">Clock In</button>
+        <button class="btn-primary" onclick="logout()" style="background:var(--danger)">Logout</button>
+      </div>
+    </div>
+
+    <div id="content">
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="grid-4" style="margin-bottom:24px;">
+          <div class="card">
+            <div style="color:var(--text-muted); font-weight:600; font-size:12px;">TOTAL EMPLOYEES</div>
+            <div class="kpi-val" style="color:var(--accent)" id="kpiTotal">0</div>
+          </div>
+          <div class="card">
+            <div style="color:var(--text-muted); font-weight:600; font-size:12px;">PRESENT TODAY</div>
+            <div class="kpi-val" style="color:var(--success)" id="kpiPresent">0</div>
+          </div>
+          <div class="card">
+            <div style="color:var(--text-muted); font-weight:600; font-size:12px;">ON LEAVE</div>
+            <div class="kpi-val" style="color:var(--warning)" id="kpiLeaves">0</div>
+          </div>
+          <div class="card">
+            <div style="color:var(--text-muted); font-weight:600; font-size:12px;">ABSENT</div>
+            <div class="kpi-val" style="color:var(--danger)" id="kpiAbsent">0</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">Recent Activity Feed</div>
+          <div id="activityFeed" style="color:var(--text-secondary)">
+            <p>✔ Welcome back, ready to start the day!</p>
+            <p style="margin-top:8px">📅 Payroll generated successfully on 1st July.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPLOYEES (Admin Only) -->
+      <div id="page-employees" class="page admin-only">
+        <div class="card">
+          <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Directory</span>
+            <button class="btn-primary">Add New Employee</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Emp Code</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="empTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div id="page-attendance" class="page">
+        <div class="card" style="text-align:center; padding: 40px;">
+          <div style="font-size:64px; font-weight:900; color:var(--accent); font-variant-numeric:tabular-nums;" id="bigTimer">00:00:00</div>
+          <div style="color:var(--text-muted); margin-bottom:24px;">Current Session Duration</div>
+          <button id="bigClockBtn" class="clock-btn" style="font-size:18px; padding:12px 32px;" onclick="toggleClock()">CLOCK IN</button>
+        </div>
+      </div>
+
+      <!-- LEAVES -->
+      <div id="page-leaves" class="page">
+        <div class="card">
+          <div class="card-header">Leave Management</div>
+          <table>
+            <thead>
+              <tr><th>Employee ID</th><th>Type</th><th>Duration</th><th>Status</th></tr>
+            </thead>
+            <tbody id="leaveTableBody">
+              <tr><td>3</td><td>SICK</td><td>2 Days</td><td><span class="badge warning">PENDING</span></td></tr>
+              <tr><td>4</td><td>CASUAL</td><td>5 Days</td><td><span class="badge success">APPROVED</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let STATE = {
+  portal: 'admin',
+  token: null,
+  clockedIn: false,
+  timerInt: null,
+  seconds: 0
+};
+
+// ── LOGIN LOGIC ──
+function selectPortal(type, el) {
+  STATE.portal = type;
+  document.querySelectorAll('.portal-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function doLogin() {
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = "Authenticating...";
+  btn.style.opacity = '0.7';
+  
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'x@y.com', password: '123', portal: STATE.portal })
+    });
+    const data = await res.json();
+    
+    if(data.token) {
+      STATE.token = data.token;
+      document.getElementById('loginScreen').style.opacity = '0';
+      document.getElementById('loginScreen').style.visibility = 'hidden';
+      document.getElementById('appLayout').style.display = 'flex';
+      
+      if(STATE.portal === 'employee') {
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+      }
+      
+      fetchData();
+    }
+  } catch(e) {
+    btn.textContent = "Secure Login";
+    btn.style.opacity = '1';
+    alert("Login failed");
+  }
+}
+
+function logout() {
+  location.reload();
+}
+
+// ── NAVIGATION ──
+function nav(page, el) {
+  document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  
+  document.querySelectorAll('.page').forEach(e => e.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  
+  const titles = { 'dashboard': 'Dashboard', 'employees': 'Employee Directory', 'attendance': 'Time & Attendance', 'leaves': 'Leave Requests' };
+  document.getElementById('pageTitle').textContent = titles[page];
+}
+
+// ── CLOCK LOGIC ──
+function toggleClock() {
+  STATE.clockedIn = !STATE.clockedIn;
+  const tBtn = document.getElementById('topClockBtn');
+  const bBtn = document.getElementById('bigClockBtn');
+  
+  if(STATE.clockedIn) {
+    tBtn.textContent = 'Clock Out'; tBtn.classList.add('clocked-in');
+    bBtn.textContent = 'CLOCK OUT'; bBtn.classList.add('clocked-in');
+    STATE.timerInt = setInterval(() => {
+      STATE.seconds++;
+      const h = String(Math.floor(STATE.seconds / 3600)).padStart(2,'0');
+      const m = String(Math.floor((STATE.seconds % 3600) / 60)).padStart(2,'0');
+      const s = String(STATE.seconds % 60).padStart(2,'0');
+      document.getElementById('bigTimer').textContent = `${h}:${m}:${s}`;
+    }, 1000);
+    fetch('/api/attendance/tick', { method: 'POST', body: JSON.stringify({ empId: 1, type: 'IN' }) });
+  } else {
+    tBtn.textContent = 'Clock In'; tBtn.classList.remove('clocked-in');
+    bBtn.textContent = 'CLOCK IN'; bBtn.classList.remove('clocked-in');
+    clearInterval(STATE.timerInt);
+    fetch('/api/attendance/tick', { method: 'POST', body: JSON.stringify({ empId: 1, type: 'OUT' }) });
+  }
+}
+
+// ── FETCH DATA ──
+async function fetchData() {
+  try {
+    const statRes = await fetch('/api/stats');
+    const stats = await statRes.json();
+    document.getElementById('kpiTotal').textContent = stats.total || 0;
+    document.getElementById('kpiPresent').textContent = stats.present || 0;
+    document.getElementById('kpiLeaves').textContent = stats.leaves || 0;
+    document.getElementById('kpiAbsent').textContent = stats.absent || 0;
+
+    const empRes = await fetch('/api/employees');
+    const emps = await empRes.json();
+    
+    let html = '';
+    emps.forEach(e => {
+      let bClass = e.status === 'PRESENT' ? 'success' : e.status === 'ABSENT' ? 'danger' : 'warning';
+      html += `<tr>
+        <td style="font-weight:600">${e.code}</td>
+        <td>${e.name}</td>
+        <td>${e.role}</td>
+        <td><span class="badge ${bClass}">${e.status}</span></td>
+      </tr>`;
+    });
+    document.getElementById('empTableBody').innerHTML = html;
+  } catch(e) { console.log(e); }
+}
+</script>
+</body>
+</html>

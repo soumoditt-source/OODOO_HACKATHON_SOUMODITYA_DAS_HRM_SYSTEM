@@ -1,0 +1,11 @@
+{
+  "name": "@hrms/payroll-engine",
+  "version": "1.0.0",
+  "main": "calculator.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

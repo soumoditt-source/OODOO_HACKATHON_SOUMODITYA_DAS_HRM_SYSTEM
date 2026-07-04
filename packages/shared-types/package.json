@@ -1,0 +1,11 @@
+{
+  "name": "@hrms/shared-types",
+  "version": "1.0.0",
+  "main": "permissions.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
