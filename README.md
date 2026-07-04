@@ -1,118 +1,84 @@
-# Odoo HRMS Enterprise System
+# Odoo Enterprise HRMS System
 ### Built by Soumoditya Das for Odoo Hackathon 2026
 
 ![Odoo](https://img.shields.io/badge/Odoo-Hackathon-blue?style=for-the-badge)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
 ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
-![Three.js](https://img.shields.io/badge/threejs-black?style=for-the-badge&logo=three.js&logoColor=white)
 
-An enterprise-grade, standalone Human Resource Management System built from scratch, emphasizing **zero dependency on external backend-as-a-service platforms**, robust relational database design, and high performance.
+An enterprise-grade, standalone Human Resource Management System built from scratch. It features **zero external dependencies** for data hosting, utilizing an integrated backend architecture and React Single Page Application (SPA).
 
 ## 🎯 The Social Problem & Vision
-Modern startups and SMEs often rely on fragmented tools or expensive SaaS platforms (like Firebase/MongoDB Atlas) for HR management. This creates data silos, vendor lock-in, and compliance risks. 
-
-**This project solves this by providing a self-reliant, highly scalable, and modular HRMS that companies can own entirely.** It uses a robust relational SQL database (SQLite configured for PostgreSQL compatibility), ensuring ACID compliance, data integrity, and local ownership.
+Modern startups and SMEs often rely on fragmented tools or expensive SaaS platforms for HR management, creating data silos and vendor lock-in. 
+**This project provides a self-reliant, highly scalable, and modular HRMS that companies can own entirely.**
 
 ---
 
 ## 🔐 Quick Start for Judges (Demo Credentials)
-To quickly test the application, please use the following seeded accounts:
 
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Admin / HR Manager** | `soumoditya@hrms.in` | `admin@2026` |
-| **Employee** | `priya.nair@hrms.in` | `password123` |
+| Role | Email | Password | Access |
+| :--- | :--- | :--- | :--- |
+| **Admin / HR Manager** | `soumoditya@hrms.in` | `admin@2026` | Full Access (Mask: 63) |
+| **Employee** | `priya.nair@hrms.in` | `password123` | Limited View (Mask: 3) |
 
 ---
 
 ## 🏗️ System Architecture & Tech Stack
 
-*   **Frontend**: React.js (Vite), Pure CSS (Bento Grid UI), Three.js (Interactive Login Canvas).
+*   **Frontend**: React.js (Vite), Pure CSS, HTML5.
 *   **Backend**: Node.js, Express.js.
-*   **Database**: SQLite (via `better-sqlite3` for zero-setup local dev) with a **PostgreSQL-compatible relational schema**. 
-*   **Authentication**: JWT (JSON Web Tokens) with strict Role-Based Access Control (RBAC).
+*   **Database Engine**: Built with a strict relational design in mind. Supports fallback to highly efficient in-memory JSON document storage if native SQLite binaries are unavailable in the evaluation environment.
+*   **Authentication & Security**: Stateful JSON Web Tokens (JWT) verified at the API Gateway level.
+*   **Authorization**: Highly optimized **Bitmask Role-Based Access Control (RBAC)** allowing $O(1)$ constant time permission checks.
 
-### Key Architectural Decisions:
-1.  **Relational SQL over NoSQL**: HR data is inherently relational (Employees belong to Departments, have Shifts, generate Attendance, and receive Payslips). A strict SQL schema ensures data integrity and complex querying capabilities.
-2.  **Integer Micro-Cents for Financials**: All salary and payroll calculations are done in integer micro-cents (multiplying by 1,000,000) to absolutely eliminate floating-point arithmetic errors.
-3.  **Graceful Degradation**: The API server includes an in-memory fallback store if the SQLite database fails to initialize, ensuring the application remains testable in restricted environments.
-
-### 🏛️ 3D System Architecture Diagram
+### 🏛️ Architecture Flow
 ```mermaid
 graph TD
-    subgraph Frontend [Client Tier - React + Vite + Three.js]
-        UI[Bento Grid UI]
-        AuthUI[JWT Auth Context]
-        ThreeJS[WebGL Background]
-        UI --> AuthUI
+    subgraph Frontend [React SPA]
+        UI[Dynamic Modals & Views]
+        State[React Hooks State Mgmt]
+        UI --> State
     end
 
-    subgraph Backend [Application Tier - Express.js Node]
-        Router[API Routes]
-        Middleware[Auth/Role Guards & Rate Limiting]
-        Payroll[Salary Engine]
-        Router --> Middleware
-        Router --> Payroll
+    subgraph Backend [Node API]
+        Gateway[API Gateway]
+        RBAC[Bitmask Auth]
+        Payroll[Payroll Engine]
+        Gateway --> RBAC
+        Gateway --> Payroll
     end
 
-    subgraph Database [Data Tier - Relational SQL]
-        DB[(SQLite / PostgreSQL Schema)]
-        Employees[Employees & Roles]
-        Attendance[Attendance & Shifts]
-        Leaves[Leave Requests]
-        Finance[Payroll & Payslips]
-        DB --- Employees
-        DB --- Attendance
-        DB --- Leaves
-        DB --- Finance
-    end
-
-    Frontend -- REST API / JSON --> Backend
-    Backend -- better-sqlite3 --> Database
+    Frontend -- REST --> Backend
 ```
 
-## 💾 Database Schema Design (PostgreSQL / SQLite)
+## ✨ Core Features Developed
 
-The system relies on a meticulously normalized relational schema.
+1. **Auto-Computing Indian Payroll Engine**:
+   Automatically calculates Basic (50%), HRA (50% of Basic), Standard Allowance, PF (12%), PT, and TDS based on total payable days and base wage.
+2. **Dynamic Attendance & Calendar**:
+   Fully interactive Calendar Grid with selected date ranges, overlapping leave badges, and a granular Monthly Attendance view.
+3. **Advanced Employee Directory**:
+   Two-tier profile views with auto-generated Employee Codes (`OI-NAME-YEAR-XXXX`).
+4. **Actionable Modals**:
+   Zero "empty windows". Every action (Mark Attendance, Add Project, Apply Leave, Create Task) is backed by a fully structured modal interface.
 
-*   `departments`: Organizational units.
-*   `roles`: Job titles and hierarchy levels.
-*   `employees`: Core user data, hashed passwords, base wages (micro-cents), portal access levels.
-*   `shifts` & `shift_roster`: Time management and scheduling.
-*   `attendance`: Daily clock-in/out tracking with calculated work minutes.
-*   `leave_types` & `leave_requests`: Paid/Unpaid time off management.
-*   `payroll_runs` & `payslips`: Monthly salary generation with automated tax and deduction calculations.
-*   `tickets` & `notices`: Internal communication and IT support.
-*   `audit_log`: Tracking critical system actions for security and compliance.
+## 🚀 Running Locally (Testing & Building)
 
-## ✨ Features
-
-*   **Beautiful UI/UX**: Clean, intuitive interface inspired by modern CRM aesthetics, featuring a responsive sidebar, KPI dashboards, and data tables.
-*   **Role-Based Access**: Distinct portals and permissions for Admin, HR, and Employees.
-*   **Live Attendance Tracking**: Real-time clock-in/clock-out system with active session duration timer.
-*   **Comprehensive HR Modules**: 
-    *   Employee Directory
-    *   Leave Management (Apply, Approve/Reject)
-    *   Payroll & Payslips
-    *   Corporate Notice Board
-    *   Support Ticketing System
-*   **Robust Input Validation**: Graceful error handling and input sanitization on the backend.
-*   **Security**: Bcrypt password hashing, JWT authorization, Express Rate Limiting.
-
-## 🚀 Running Locally
+The application has been strictly configured to run in any standard Node environment. 
 
 1.  **Install Dependencies**:
     ```bash
     npm install
     ```
-2.  **Seed the Database** (Generates realistic Indian demo data, attendance, and payroll):
-    ```bash
-    node server/db/seed.js
-    ```
-3.  **Start the Application** (Runs both Vite frontend and Express API concurrently):
+2.  **Run Development Server**:
     ```bash
     npm run dev
     ```
-    *   Frontend: `http://localhost:3000`
-    *   Backend API: `http://localhost:3001`
+    *   **Frontend UI**: `http://localhost:8080`
+    *   **Backend API**: `http://localhost:8081`
+
+3.  **Production Build**:
+    To compile the React SPA for production deployment:
+    ```bash
+    npm run build
+    ```
